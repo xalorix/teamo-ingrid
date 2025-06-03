@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Te Amo Ingrid</title>
+
+  <!-- Estilos de Tailwind CSS y FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Fuentes de Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+
+  <!-- Estilos personalizados -->
+  <style id="app-style">
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #1a1a2e;
+      font-family: 'Dancing Script', cursive;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .love-rain-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .love-text {
+      position: absolute;
+      color: #ff6b6b;
+      font-size: 2rem;
+      opacity: 0;
+      animation: fallDown 8s linear forwards;
+      text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    }
+
+    @keyframes fallDown {
+      0% {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(105vh);
+        opacity: 0;
+      }
+    }
+
+    .name-display {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 7rem;
+      color: #ff9999;
+      text-shadow: 0 0 15px rgba(255, 153, 153, 0.8);
+      transform: scale(0.8);
+      transition: transform 1.5s ease;
+    }
+
+    .name-active {
+      opacity: 1;
+    }
+
+    .name-active .name {
+      transform: scale(1);
+    }
+
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      color: #ff9999;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgba(255, 153, 153, 0.2);
+      border-top-color: #ff9999;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .flash-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 153, 153, 0.4);
+      opacity: 0;
+      z-index: 5;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .audio-controls {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      color: rgba(255, 153, 153, 0.7);
+    }
+
+    .volume-slider {
+      width: 80px;
+      margin-left: 10px;
+      -webkit-appearance: none;
+      height: 3px;
+      background: rgba(255, 153, 153, 0.3);
+      outline: none;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      border-radius: 5px;
+    }
+
+    .volume-slider:hover {
+      opacity: 1;
+    }
+
+    .volume-slider::-webkit-slider-thumb,
+    .volume-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff9999;
+      cursor: pointer;
+    }
+
+    .mute-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: rgba(255, 153, 153, 0.7);
+      transition: color 0.3s ease;
+    }
+
+    .mute-button:hover {
+      color: #ff9999;
+    }
+
+    .sparkle {
+      position: absolute;
+      pointer-events: none;
+      background-image: radial-gradient(#ff9999 10%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    @keyframes sparkle {
+      0% {
+        transform: scale(0);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="cursor-pointer">
+  <!-- Pantalla de carga -->
+  <div class="loading-screen">
+    <div class="spinner"></div>
+    <p>Preparando la lluvia de amor...</p>
+  </div>
+
+  <!-- Lluvia de corazones -->
+  <div class="love-rain-container" id="loveRainContainer"></div>
+
+  <!-- Nombre al centro -->
+  <div class="name-display">
+    <div class="name">Ingrid</div>
+  </div>
+
+  <!-- Efecto flash -->
+  <div class="flash-effect"></div>
+
+  <!-- Controles de audio -->
+  <div class="audio-controls">
+    <button class="mute-button" id="muteButton">
+      <i class="fas fa-volume-up"></i>
+    </button>
+    <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume-slider" id="volumeSlider" />
+  </div>
+
+  <!-- Aquí va el script JS en el siguiente archivo o antes de cerrar body -->
+</body>
+</html>
+<script>
+  // Espera a que el contenido se cargue completamente
+  document.addEventListener('DOMContentLoaded', function () {
+    const loveRainContainer = document.getElementById('loveRainContainer');
+    const loadingScreen = document.querySelector('.loading-screen');
+    const flashEffect = document.querySelector('.flash-effect');
+    const nameDisplay = document.querySelector('.name-display');
+    const muteButton = document.getElementById('muteButton');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    // Configuración de la música de fondo
+    const backgroundMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_f45091e34d.mp3?filename=romantic-background-116282.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = volumeSlider.value;
+
+    // Iniciar la música después de que la pantalla de carga se oculta
+    function startExperience() {
+      loadingScreen.style.display = 'none';
+      backgroundMusic.play();
+      generarLluvia();
+    }
+
+    // Función para generar elementos de 'te amo' aleatorios que caen
+    function generarLluvia() {
+      setInterval(() => {
+        const loveText = document.createElement('div');
+        loveText.classList.add('love-text');
+        loveText.innerText = 'te amo';
+        loveText.style.left = Math.random() * 100 + '%'; // Posición aleatoria
+        loveText.style.animationDelay = Math.random() * 4 + 's'; // Delay aleatorio
+        loveRainContainer.appendChild(loveText);
+
+        // Remover el texto después de la animación
+        setTimeout(() => {
+          loveText.remove();
+        }, 8000);
+      }, 300);
+    }
+
+    // Evento para manejar clics o toques en la pantalla
+    function handleScreenInteraction() {
+      flashEffect.style.opacity = '1';
+      nameDisplay.classList.add('name-active');
+
+      // Quitar efectos después de un tiempo
+      setTimeout(() => {
+        flashEffect.style.opacity = '0';
+        nameDisplay.classList.remove('name-active');
+      }, 2000);
+    }
+
+    // Escuchar eventos de clic y toque
+    document.body.addEventListener('click', handleScreenInteraction);
+    document.body.addEventListener('touchstart', handleScreenInteraction);
+
+    // Manejar el control de volumen
+    volumeSlider.addEventListener('input', function () {
+      backgroundMusic.volume = this.value;
+    });
+
+    // Alternar silencio/sonido
+    muteButton.addEventListener('click', function () {
+      backgroundMusic.muted = !backgroundMusic.muted;
+      this.innerHTML = backgroundMusic.muted
+        ? '<i class="fas fa-volume-mute"></i>'
+        : '<i class="fas fa-volume-up"></i>';
+    });
+
+    // Simular una carga inicial para mostrar el spinner
+    setTimeout(startExperience, 2000);
+  });
+</script>
